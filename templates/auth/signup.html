@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>WMS - Registration</title>
+
+    <link rel="shortcut icon" type="image/x-icon" href="/static/assets/img/favicon.png">
+
+    <link rel="stylesheet" href="/static/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/assets/plugins/fontawesome/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/static/assets/plugins/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="/static/assets/css/style.css">
+</head>
+<body class="account-page">
+
+<div class="main-wrapper">
+    <div class="account-content">
+        <div class="login-wrapper">
+            <div class="login-content">
+                <div class="login-userset">
+                    <form action="/register/" method="POST" name="login">
+
+                        <div class="login-logo">
+                            <img src="/static/assets/img/logo.png" alt="img">
+                        </div>
+                        <div class="login-userheading">
+                            <h3>Create an Account</h3>
+                            <h4>Registration only for New Customer</h4>
+                        </div>
+                        <div class="form-login">
+                            <label>Full Name</label>
+                            <div class="form-addons">
+                                <input type="text" placeholder="Enter your full name" name="full_name" required
+                                onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || event.charCode == 32">
+                                <img src="/static/assets/img/icons/users1.svg" alt="img">
+                            </div>
+                        </div>
+                        <div class="form-login">
+                            <label>Email</label>
+                            <div class="form-addons">
+                                <input type="email" placeholder="Enter your email address" name="email" required>
+                                <img src="/static/assets/img/icons/mail.svg" alt="img">
+                            </div>
+                        </div>
+                        <div class="form-login">
+                            <label>Password</label>
+                            <div class="pass-group">
+                                <input type="password" class="pass-input" placeholder="Enter your password"
+                                       name="password" required>
+                                <span class="fas toggle-password fa-eye-slash"></span>
+                            </div>
+                        </div>
+                        <div class="form-login">
+                            <input type="submit" class="btn btn-login" value="Sign Up"/>
+                        </div>
+                        <div class="signinform text-center">
+                            <h4>Already a user? <a href="/" class="hover-a">Sign In</a></h4>
+                        </div>
+                        <div class="form-setlogin">
+                            <h4>Or sign up with</h4>
+                        </div>
+                        <div class="form-sociallink">
+                            <ul>
+                                <li>
+                                    <a href="javascript:void(0);">
+                                        <img src="/static/assets/img/icons/google.png" class="me-2" alt="google">
+                                        Sign Up using Google
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0);">
+                                        <img src="/static/assets/img/icons/facebook.png" class="me-2" alt="google">
+                                        Sign Up using Facebook
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="login-img">
+                <img src="/static/assets/img/login.jpg" alt="img">
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/static/assets/js/jquery-3.6.0.min.js"></script>
+<script src="/static/assets/js/feather.min.js"></script>
+<script src="/static/assets/js/bootstrap.bundle.min.js"></script>
+<script src="/static/assets/js/script.js"></script>
+</body>
+</html>

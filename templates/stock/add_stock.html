@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+
+{% block title %}Stock{% endblock title %}
+
+{% block sidebars %}active{% endblock sidebars %}
+
+{% block body %}
+
+    <div class="page-wrapper">
+        <div class="content">
+            <div class="page-header">
+                <div class="page-title">
+                    <h4>Stock Management</h4>
+                    {#                    <h6>Add Stock</h6>#}
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="form-group">
+                        <form id="barcode-form">
+                            <div class="form-group row">
+                                <div class="col-lg-6">
+                                    <div class="input-group">
+                                    <span class="input-group-text">
+                                        <a href="javascript:void(0);" id="scanButton">Scanning</a>
+                                    </span>
+                                        <input type="text" class="form-control" id="barcode" name="barcode" autofocus
+                                               placeholder="Please Type SKU code or Scan SKU ..." required
+                                               onkeypress="return (event.charCode >= 48 && event.charCode <= 57)"
+                                                {% if stock_id %}
+                                               value="{{ stock_id }}"
+                                                {% endif %}>
+                                        <span class="input-group-text">
+                                        <a href="javascript:void(0);" type="button"
+                                           onclick="fetchProduct()">Searching</a>
+                                    </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="display:none;" id="product-details">
+                <div class="card-body">
+                    <div>
+                        <div class="row">
+                            <div class="col-6">
+                                <h6 id="product-name"></h6>
+                                <h6 id="product-sku"></h6>
+                                <h6 id="product-stock"></h6>
+                                <br/>
+                            </div>
+
+                            <div class="col-6">
+                                <form id="add-stock-form">
+                                    <div class="row">
+                                        <div class="col-lg-6 col-sm-6 col-8">
+                                            <div class="form-group">
+                                                <label>Add Stock : </label>
+                                                <input type="hidden" value="" name="sku" id="sku">
+                                                <input type="text" min="1" max="1000" minlength="1" maxlength="4"
+                                                       id="qty" name="qty" required
+                                                       onkeypress="return (event.charCode >= 48 && event.charCode <= 57)">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-2 mt-4">
+                                            <button type="submit" onclick="addStock()"
+                                                    class="btn btn-submit">Submit
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="message" id="message"></div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="table-top">
+                                <div class="search-set">
+                                    <div class="search-input">
+                                        <a class="btn btn-searchset">
+                                            <img src="/static/assets/img/icons/search-white.svg" alt="img">
+                                        </a>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="table-responsive" id="stockInfo">
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function fetchProduct() {
+            const barcode = document.getElementById('barcode').value;
+
+            fetch(`/product/scan/${barcode}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        // Display product details and show the form
+                        document.getElementById('product-name').innerText = `Product Name: ${data.product_name}`;
+                        document.getElementById('product-sku').innerText = `Product SKU: ${data.sku}`;
+                        document.getElementById('product-details').style.display = 'block';
+                        document.getElementById('sku').value = barcode;
+                    }
+                })
+                .catch(error => console.error('Error fetching product:', error));
+
+            const response = await fetch(`/stock/${barcode}`);
+            const data = await response.json();
+            {#console.log(data)#}
+            if (response.ok) {
+                const stockInfoDiv = document.getElementById('stockInfo');
+                let tableHtml = `
+            <table class="table datanew">
+                <thead>
+                                    <tr>
+                                        <th>Sr. No</th>
+                                        <th>Date</th>
+                                        <th>+ Quantity</th>
+                                        <th>- Quantity</th>
+                                        <th>Total Quantity</th>
+                                    </tr>
+                                    </thead>
+                <tbody>
+        `;
+                let no = 1;
+                // Iterate over the stock data and create table rows
+                data.forEach(stock => {
+                    tableHtml += `
+                <tr>
+                    <td>${no++}</td>
+                    <td>${new Date(stock.date).toLocaleString()}</td>
+                    <td style="background-color: lightgreen" class="text-black"><p class="align-center">${stock['+qty'] || 0}</p></td>
+                    <td style="background-color: lightcoral" class="text-black"><p class="align-center">${stock['-qty'] || 0}</p></td>
+                    <td><p class="align-center"><b>${stock.total_qty}</b></p></td>
+                </tr>
+            `;
+                });
+
+                tableHtml += `
+                </tbody>
+            </table>
+        `;
+
+                // Insert the table into the div
+                stockInfoDiv.innerHTML = tableHtml;
+            } else {
+                alert(data.error || 'Error fetching stock data.');
+            }
+        }
+
+        function addStock() {
+            const sku = document.getElementById('barcode').value;
+            const qty = document.getElementById('qty').value;
+
+            fetch('/stock/addstock', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({sku: sku, qty: parseInt(qty)})
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        alert(data.message);
+                        // Clear form after successful submission
+                        document.getElementById('barcode-form').reset();
+                        document.getElementById('product-details').style.display = 'none';
+                    } else if (data.error) {
+                        alert(data.error);
+                    }
+                })
+                .catch(error => console.error('Error adding stock:', error));
+        }
+    </script>
+
+    <script>
+        document.getElementById('scanButton').addEventListener('click', function () {
+            fetch('/scan')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.barcode) {
+                        document.getElementById('barcode').value = data.barcode;
+                    } else {
+                        console.error('No barcode detected.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+    </script>
+
+{% endblock body %}

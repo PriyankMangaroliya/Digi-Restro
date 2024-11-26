@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}View Product{% endblock title %}
+
+{% block sidebarvp %}active{% endblock sidebarvp %}
+
+{% block body %}
+
+    <div class="page-wrapper">
+        <div class="content">
+            <div class="page-header">
+                <div class="page-title">
+                    <h4>Product Management</h4>
+                    <h6>Product List</h6>
+                </div>
+                <div class="page-btn">
+                    <a href="/product/addproduct" class="btn btn-added">
+                        <img src="/static/assets/img/icons/plus.svg" alt="img" class="me-1">Add New Product</a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-top">
+                        <div class="search-set">
+                            <div class="search-input">
+                                <a class="btn btn-searchset"><img src="/static/assets/img/icons/search-white.svg"
+                                                                  alt="img"></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table datanew">
+                            <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Product Image</th>
+                                <th>Product Name</th>
+                                <th>SKU</th>
+                                <th>Price</th>
+                                <th>Min Qty</th>
+                                <th>Max Qty</th>
+                                <th>Area</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for products_list in products_list %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td><img src="/{{ products_list.image }}" width="40%" height="40%" alt="img"></td>
+                                    <td>{{ products_list.product_name }}</td>
+                                    <td>{{ products_list.sku }}</td>
+                                    <td>{{ products_list.price }}</td>
+                                    <td>{{ products_list.min }}</td>
+                                    <td>{{ products_list.max }}</td>
+                                    <td>{{ products_list.area_info[0].area_name }}</td>
+                                    <td>{{ products_list.status }}</td>
+                                    {#                                    <td>{{ products_list.description }}</td>#}
+                                    <td>
+                                        <a class="me-3" href="/stock/product/managestock/{{ products_list.sku }}">
+                                            <img src="/static/assets/img/icons/eye.svg" alt="img">
+                                        </a>
+                                        <a class="me-3" href="/product/updateproduct/{{ products_list.sku }}">
+                                            <img src="/static/assets/img/icons/edit.svg" alt="img">
+                                        </a>
+                                        {#                                        <a class="confirm-text" href="javascript:void(0);">#}
+                                        {#                                            <img src="/static/assets/img/icons/delete.svg" alt="img">#}
+                                        {#                                        </a>#}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock body %}
+

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Bill</title>
+    <style>
+        /* Customize the bill style as needed */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .bill-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .bill-details {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .bill-details th, .bill-details td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .product-image {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+        }
+
+        /* Hide everything except the .bill-content on print */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .bill-content, .bill-content * {
+                visibility: visible;
+            }
+            .bill-content {
+                position: absolute;
+                left: 0;
+                top: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bill-content">
+        <div class="bill-header">
+            <h1>Order Bill</h1>
+            <p>Order ID: {{ order['_id'] }}</p>
+            <p>Order Date: {{ order['order_date'].strftime('%Y-%m-%d %H:%M:%S') }}</p>
+            <p>Payment Type: {{ order['payment_type'] }}</p>
+        </div>
+
+        <table class="bill-details">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order['products'] %}
+                <tr>
+                    <td>{{ item['product_name'] }}</td>
+                    <td>{{ item['quantity'] }}</td>
+                    <td>{{ item['price'] }}</td>
+                    <td>{{ item['amount'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div>
+            <h3>Total Amount: {{ order['total_amount'] }}</h3>
+        </div>
+    </div>
+
+    <!-- Print Button -->
+    <div style="text-align: center; margin-top: 20px;">
+        <button onclick="window.print()">Print Bill</button>
+    </div>
+</body>
+</html>

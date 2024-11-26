@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>WMS - Verify OTP</title>
+
+    <link rel="shortcut icon" type="image/x-icon" href="/static/assets/img/favicon.png">
+
+    <link rel="stylesheet" href="/static/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/assets/plugins/fontawesome/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/static/assets/plugins/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="/static/assets/css/style.css">
+</head>
+<body class="account-page">
+
+<div class="main-wrapper">
+    <div class="account-content">
+        <form method="POST" action="/register/verify-otp">
+            <div class="login-wrapper">
+                <div class="login-content">
+                    <div class="login-userset">
+                        <div class="login-logo">
+                            <img src="/static/assets/img/logo.png" alt="img">
+                        </div>
+                        <div class="login-userheading">
+                            <h3>Verify OTP</h3>
+                            <h4>Please enter valid OTP</h4>
+                        </div>
+                        <div class="form-login">
+                            <label>Enter OTP</label>
+                            <div class="pass-group">
+                                <input type="text" id="otp" name="otp" minlength="4" maxlength="4" class="pass-input"
+                                       required placeholder="Enter your valid OTP"
+                                       onkeypress="return (event.charCode >= 48 && event.charCode <= 57)"/>
+                                <span class="fas toggle-password fa-eye-slash"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-login">
+                            <button class="btn btn-login" type="submit">Verify OTP</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="login-img">
+                    <img src="/static/assets/img/login.jpg" alt="img">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="/static/assets/js/jquery-3.6.0.min.js"></script>
+<script src="/static/assets/js/feather.min.js"></script>
+<script src="/static/assets/js/bootstrap.bundle.min.js"></script>
+<script src="/static/assets/js/script.js"></script>
+</body>
+</html>

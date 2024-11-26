@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Timeline{% endblock title %}
+
+{% block body %}
+
+    <div class="page-wrapper cardhead ms-0">
+        <div class="content">
+
+            <div class="page-header">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <h3 class="page-title">Timeline</h3>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/client/dashboard">Dashboard</a></li>
+                            <li class="breadcrumb-item active">Timeline</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body align-center">
+                            <ul class="timeline">
+                                {% for status_item in timeline %}
+                                    <li {% if loop.index is odd %} class="timeline-inverted" {% endif %}>
+                                        <div class="timeline-badge
+                                            {% if status_item.status == 'Submitted' %}
+                                                success
+                                            {% elif status_item.status == 'Assigned' %}
+                                                primary
+                                            {% elif status_item.status == 'Shipment Ready' %}
+                                                bg-dark
+                                            {% elif status_item.status == 'Assigned to Supplier' %}
+                                                danger
+                                            {% elif status_item.status == 'Out for Delivery' %}
+                                                info
+                                            {% elif status_item.status == 'Delivered' %}
+                                                bg-success
+                                            {% endif %}
+                                            ">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                        <div class="timeline-panel">
+                                            <div class="timeline-heading">
+                                                <h4 class="timeline-title">{{ status_item.status }}</h4>
+                                            </div>
+                                            <div class="timeline-body">
+                                                <p>
+                                                    {% if status_item.timestamp %}
+                                                        Status updated at:
+                                                        {{ status_item.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}
+                                                    {% elif status_item.updated_at %}
+                                                        Status updated at:
+                                                        {{ status_item.updated_at.strftime('%Y-%m-%d %H:%M:%S') }}
+                                                    {% elif status_item.delivery_date %}
+                                                        Delivered at:
+                                                        {{ status_item.delivery_date.strftime('%Y-%m-%d %H:%M:%S') }}
+                                                    {% endif %}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock body %}
+

@@ -1,0 +1,253 @@
+{% extends 'base.html' %}
+
+{% block title %}View COD Orders{% endblock title %}
+
+{% block sidebarvs %}active{% endblock sidebarvs %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+{% block body %}
+
+    <div class="page-wrapper">
+        <div class="content">
+            <form id="submit-cash-form">
+
+                <div class="page-header">
+                    <div class="page-title">
+                        <h4>COD Orders Deatils</h4>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-top">
+                            <div class="search-set">
+                                <div class="search-input">
+                                    <a class="btn btn-searchset">
+                                        <img src="/static/assets/img/icons/search-white.svg" alt="img"></a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table datanew">
+                                <thead>
+                                <tr>
+                                    <th>Select</th>
+                                    <th>Order ID</th>
+                                    <th>Total Amount</th>
+                                    <th>Submission Status</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for order_data in orders_data %}
+                                    <tr>
+                                        <td>
+                                            {% if order_data.status == "Collected" and not order_data.submission_date %}
+                                                <input type="checkbox" class="order-checkbox"
+                                                       value="{{ order_data.cash_id }}"
+                                                       data-amount="{{ order_data.total_amount }}">
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ loop.index }}</td>
+                                        <td>{{ order_data.total_amount }}</td>
+
+                                        <!-- Check the status of the cash collection -->
+                                        <td>
+                                            {% if order_data.status == "Collected" and not order_data.submission_date %}
+                                                <span>Collected but not submitted</span>
+                                            {% elif order_data.status == "Submitted" %}
+                                                <span>Submitted</span>
+                                            {% else %}
+                                                <span>Pending Collection</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-3">
+                        <h5>
+                            <span id="total-amount">Total Amount :</span>
+                        </h5>
+                    </div>
+                    <div class="col">
+                        <button type="button" class="btn btn-primary"
+                                data-toggle="modal" data-target="#exampleModal" id="submit-multiple-cash" disabled>
+                            Submit Selected Cash
+                        </button>
+                    </div>
+                </div>
+            </form>
+            {#            <div id="confirmation-modal" style="display:none;">#}
+            {#                <h4>Total Amount to Submit: <span id="modal-total-amount">0</span></h4>#}
+            {#                <button onclick="submitCash()">Confirm Submit</button>#}
+            {#                <button onclick="closeModal()">Cancel</button>#}
+            {#            </div>#}
+
+        </div>
+    </div>
+
+    {# Modal #}
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Case Submit</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Case Submit or Not?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="submitCash()" class="btn btn-primary">Submit</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+    <script>
+        let selectedOrders = [];
+
+        // Update selected orders and total amount
+        document.querySelectorAll('.order-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                const cashId = this.value;
+                const amount = parseFloat(this.dataset.amount);
+
+                if (this.checked) {
+                    selectedOrders.push({cash_id: cashId, amount: amount});
+                } else {
+                    selectedOrders = selectedOrders.filter(order => order.cash_id !== cashId);
+                }
+
+                // Update total amount
+                const totalAmount = selectedOrders.reduce((sum, order) => sum + order.amount, 0);
+                document.getElementById('total-amount').textContent = 'Total Amount : ' + totalAmount;
+
+                // Enable or disable submit button based on selection
+                document.getElementById('submit-multiple-cash').disabled = selectedOrders.length === 0;
+            });
+        });
+
+        // Trigger modal to confirm submission
+        document.getElementById('submit-multiple-cash').addEventListener('click', function () {
+            const totalAmount = selectedOrders.reduce((sum, order) => sum + order.amount, 0);
+            document.getElementById('modal-total-amount').textContent = totalAmount;
+            document.getElementById('confirmation-modal').style.display = 'block';
+        });
+
+        // Submit selected cash orders to backend
+        function submitCash() {
+            const cashIds = selectedOrders.map(order => order.cash_id);
+
+            fetch('/supplier/submit_multiple_cash', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer ' + localStorage.getItem('token')
+                },
+                body: JSON.stringify({cash_ids: cashIds})
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        {#alert(data.message);#}
+                        location.reload(); // Reload the page to update the status
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => console.error('Error submitting cash:', error));
+        }
+
+        // Close modal without submitting
+        function closeModal() {
+            document.getElementById('confirmation-modal').style.display = 'none';
+        }
+    </script>
+
+{% endblock body %}
+
+
+
+{#<!DOCTYPE html>#}
+{#<html lang="en">#}
+{#<head>#}
+{#    <meta charset="UTF-8">#}
+{#    <title>COD Orders</title>#}
+{#</head>#}
+{#<body>#}
+{#<div class="container">#}
+{#    <h2>COD Orders</h2>#}
+{#    <form id="submit-cash-form">#}
+{#        <table class="table">#}
+{#            <thead>#}
+{#            <tr>#}
+{#                <th>Select</th>#}
+{#                <th>Order ID</th>#}
+{#                <th>Total Amount</th>#}
+{#                <th>Submission Status</th>#}
+{#            </tr>#}
+{#            </thead>#}
+{#            <tbody id="cod-orders">#}
+{#            {% for order_data in orders_data %}#}
+{#                <tr>#}
+{#                    <td>#}
+{#                        {% if order_data.status == "Collected" and not order_data.submission_date %}#}
+{#                            <input type="checkbox" class="order-checkbox" value="{{ order_data.cash_id }}"#}
+{#                                   data-amount="{{ order_data.total_amount }}">#}
+{#                        {% endif %}#}
+{#                    </td>#}
+{#                    <td>{{ loop.index }}</td>#}
+{#                    <td>{{ order_data.total_amount }}</td>#}
+{##}
+{#                    <!-- Check the status of the cash collection -->#}
+{#                    <td>#}
+{#                        {% if order_data.status == "Collected" and not order_data.submission_date %}#}
+{#                            <span>Collected but not submitted</span>#}
+{#                        {% elif order_data.status == "Submitted" %}#}
+{#                            <span>Submitted</span>#}
+{#                        {% else %}#}
+{#                            <span>Pending Collection</span>#}
+{#                        {% endif %}#}
+{#                    </td>#}
+{#                </tr>#}
+{#            {% endfor %}#}
+{#            </tbody>#}
+{#        </table>#}
+{#        <div>#}
+{#            <p id="total-amount">Total Amount :</p>#}
+{#            <button type="button" class="btn btn-primary" id="submit-multiple-cash" disabled>Submit Selected Cash#}
+{#            </button>#}
+{#        </div>#}
+{#    </form>#}
+{##}
+{#    <!-- Modal for confirmation -->#}
+{#    <div id="confirmation-modal" style="display:none;">#}
+{#        <h4>Total Amount to Submit: <span id="modal-total-amount">0</span></h4>#}
+{#        <button onclick="submitCash()">Confirm Submit</button>#}
+{#        <button onclick="closeModal()">Cancel</button>#}
+{#    </div>#}
+{#</div>#}
+{##}
+{##}
+{#</body>#}
+{#</html>#}

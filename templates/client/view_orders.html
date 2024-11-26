@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Order History{% endblock title %}
+
+{% block body %}
+
+<div class="page-wrapper ms-0">
+        <div class="content">
+            <div class="page-header">
+                <div class="page-title">
+                    <h4>Order History List</h4>
+                    <h6>Manage your Orders</h6>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-top">
+                        <div class="search-set">
+                            <div class="search-input">
+                                <a class="btn btn-searchset"><img src="/static/assets/img/icons/search-white.svg"
+                                                                  alt="img"></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table datanew">
+                            <thead>
+                            <tr>
+                                <th>S. No</th>
+                                <th>Products</th>
+                                <th>Order Date</th>
+                                <th>Total Amount</th>
+                                <th>Payment Type</th>
+                                <th>Order Status</th>
+                                <th>Payment Status</th>
+                                <th>View Status</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for order in orders_details %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>
+                                        <ul>
+                                            {% for product in order.products %}
+                                                <li>{{ product.product_name }} (Qty: {{ product.quantity }}) -
+                                                    Rs.{{ product.amount }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
+                                    <td>{{ order.order_date }}</td>
+                                    <td>{{ order.total_amount }}</td>
+                                    <td>{{ order.payment_type }}</td>
+                                    {% if order.status == 'Delivered' %}
+                                        <td>
+                                            <span class="badges bg-lightgreen">Received</span>
+                                        </td>
+                                    {% else %}
+                                        <td>
+                                            <span class="badges bg-lightred">Pending</span>
+                                        </td>
+                                    {% endif %}
+                                    {% if order.payment_status == 'Paid' %}
+                                        <td>
+                                            <span class="badges bg-lightgreen">Paid</span>
+                                        </td>
+                                    {% else %}
+                                        <td>
+                                            <span class="badges bg-lightred">Pending</span>
+                                        </td>
+                                    {% endif %}
+                                    <td>
+                                        <a class="me-3" href="/client/order/history/timeline/{{ order.order_id }}">
+                                            <img src="/static/assets/img/icons/eye.svg" alt="img">
+                                        </a>
+                                        <a class="me-3" href="/client/download_bill/{{ order.order_id }}"  target="_blank">
+                                            <img src="/static/assets/img/icons/printer.svg" alt="img">
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock body %}

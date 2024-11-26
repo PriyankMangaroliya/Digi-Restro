@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Packages</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+<h1>Packages Management</h1>
+
+{% if not_shipped %}
+
+
+    <h2>Packages, Assigned </h2>
+    <table>
+        <thead>
+        <tr>
+            <th></th>
+            <th>Order ID</th>
+            <th>User Name</th>
+            <th>Email</th>
+            <th>Total Amount</th>
+            <th>Order Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for order in not_shipped %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ order._id }}</td>
+                <td>{{ order.user_info[0].full_name }}</td>  <!-- Access user name -->
+                <td>{{ order.user_info[0].email }}</td>  <!-- Access user email -->
+                <td>{{ order.total_amount }}</td>
+                <td>{{ order.order_date }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <h3>there is not any not shipped orders today</h3>
+{% endif %}
+
+<h2>Shipment Ready Packages</h2>
+{% if shipped %}
+    <table>
+        <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>User Name</th>
+            <th>Email</th>
+            <th>Total Amount</th>
+            <th>Order Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for order in shipped %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ order._id }}</td>
+                <td>{{ order.user_info[0].full_name }}</td>  <!-- Access user name -->
+                <td>{{ order.user_info[0].email }}</td>  <!-- Access user email -->
+                <td>{{ order.total_amount }}</td>
+                <td>{{ order.order_date }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <h3>there is not any shipped orders today</h3>
+{% endif %}
+<h2>Out for Delivery Packages</h2>
+{% if delivered %}
+    <table>
+        <thead>
+        <tr>
+            <th></th>
+            <th>Order ID</th>
+            <th>User Name</th>
+            <th>Email</th>
+            <th>Total Amount</th>
+            <th>Order Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for order in delivered %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ order._id }}</td>
+                <td>{{ order.user_info[0].full_name }}</td>  <!-- Access user name -->
+                <td>{{ order.user_info[0].email }}</td>  <!-- Access user email -->
+                <td>{{ order.total_amount }}</td>
+                <td>{{ order.order_date }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <h3>there is not any delivered orders today</h3>
+{% endif %}
+</body>
+</html>

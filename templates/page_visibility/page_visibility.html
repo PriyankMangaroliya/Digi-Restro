@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Settings{% endblock title %}
+
+{% block body %}
+
+    <div class="page-wrapper">
+        <div class="content">
+            <div class="page-header">
+                <div class="page-title">
+                    <h4>Users Permissions</h4>
+                    <h6>View All Users</h6>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-top">
+                        <div class="search-set">
+                            <div class="search-input">
+                                <a class="btn btn-searchset">
+                                    <img src="/static/assets/img/icons/search-white.svg" alt="img"></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table  datanew">
+                            <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Roles</th>
+                                <th class="text-end">Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for role in roles %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ role }}</td>
+                                    <td class="text-end">
+                                        <a class="me-3" href="/settings/roles/{{ role }}">
+                                            <img src="/static/assets/img/icons/eye.svg" alt="img">
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock body %}

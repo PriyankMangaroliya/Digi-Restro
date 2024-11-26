@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>WMS - Login</title>
+
+    <link rel="shortcut icon" type="image/x-icon" href="/static/assets/img/favicon.png">
+
+    <link rel="stylesheet" href="/static/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/assets/plugins/fontawesome/css/fontawesome.min.css">
+    <link rel="stylesheet" href="/static/assets/plugins/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="/static/assets/css/style.css">
+    <link rel="stylesheet" href="/static/assets/plugins/scrollbar/scroll.min.css">
+</head>
+<body class="account-page">
+
+<div id="global-loader">
+    <div class="whirly-loader"></div>
+</div>
+
+<div class="main-wrapper">
+    <div class="account-content">
+        <div class="login-wrapper">
+            <div class="login-content">
+                <div class="login-userset">
+                    <div class="login-logo">
+                        <img src="/static/assets/img/logo.png" alt="img">
+                    </div>
+                    <div class="login-userheading">
+                        <h3>Sign In</h3>
+                        <h4>Please login to your account</h4>
+                    </div>
+                    <div class="form-login">
+                        <label>Email</label>
+                        <div class="form-addons">
+                            <input type="email" id="email" placeholder="Enter your email address"/>
+                            <img src="/static/assets/img/icons/mail.svg" alt="img">
+                        </div>
+                    </div>
+                    <div class="form-login">
+                        <label>Password</label>
+                        <div class="pass-group">
+                            <input type="password" id="password" class="pass-input" placeholder="Enter your password">
+                            <span class="fas toggle-password fa-eye-slash"></span>
+                        </div>
+                    </div>
+                    <div class="form-login">
+                        <div class="alreadyuser">
+                            <h4><a href="/forgotpassword" class="hover-a">Forgot Password?</a></h4>
+                        </div>
+                    </div>
+                    <div class="form-login">
+
+                        <button class="btn btn-login" type="button" id="userForm">Sign In</button>
+                    </div>
+                    <div class="signinform text-center">
+                        <h4>Don’t have an account? <a href="/register" class="hover-a">Sign Up</a></h4>
+                    </div>
+                    <div class="form-setlogin">
+                        <h4>Or sign up with</h4>
+                    </div>
+                    <div class="form-sociallink">
+                        <ul>
+                            <li>
+                                <a href="javascript:void(0);">
+                                    <img src="/static/assets/img/icons/google.png" class="me-2" alt="google">
+                                    Sign Up using Google
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0);">
+                                    <img src="/static/assets/img/icons/facebook.png" class="me-2" alt="google">
+                                    Sign Up using Facebook
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="login-img">
+                <img src="/static/assets/img/login.jpg" alt="img">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('userForm').addEventListener('click', function (event) {
+        event.preventDefault();  // Prevent form from submitting the traditional way
+
+        // Get form data
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        // Send data to backend using Fetch API
+        fetch('http://127.0.0.1:5000/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',  // Tell Flask that data is JSON
+            },
+            body: JSON.stringify({email: email, password: password}),  // Convert data to JSON
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.token) {
+                    document.cookie = `token=${data.token}; path=/;`;
+                    alert('Login successful!');
+                    window.location.href = data.redirect_url;
+                    {#console.log('JWT Token:', data.token);  // Display JWT token (you can store it in localStorage if needed)#}
+                    // Example: localStorage.setItem('token', data.token);
+                } else {
+                    alert(data.message || 'Login failed!');  // Show error message
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    });
+</script>
+
+<script src="/static/assets/js/jquery-3.6.0.min.js"></script>
+<script src="/static/assets/js/feather.min.js"></script>
+<script src="/static/assets/js/bootstrap.bundle.min.js"></script>
+<script src="/static/assets/js/script.js"></script>
+<script src="/static/assets/js/jquery.slimscroll.min.js"></script>
+
+</body>
+</html>

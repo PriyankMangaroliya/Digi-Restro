@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock title %}
+
+{% block body %}
+
+    <div class="page-wrapper ms-0">
+        <div class="content">
+            <div class="page-header">
+                <div class="page-title">
+                    <h4>Task Details</h4>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-top">
+                        <div class="search-set">
+                            <div class="search-input">
+                                <a class="btn btn-searchset">
+                                    <img src="/static/assets/img/icons/search-white.svg" alt="img"></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table datanew">
+                            <thead>
+                            <tr>
+                                <th>Tasks ID</th>
+                                <th>client name</th>
+                                <th>Products</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for assigned_tasks1 in assigned_tasks %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ assigned_tasks1.user_details.full_name }}</td>
+                                    <td>
+                                        <ul>
+                                            {% for product in assigned_tasks1.products %}
+                                                <li>{{ product.product_name }} - Quantity: {{ product.quantity }} - Area
+                                                    Name : {{ product.area_name }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
+                                    <td>{{ assigned_tasks1.assigned_date }}</td>
+                                    <td>{{ assigned_tasks1.status }}</td>
+                                    {% if assigned_tasks1.status == 'Assigned' %}
+                                        <td>
+                                            <button class="btn btn-success" id="complete-order"
+                                                    data-order-id="{{ assigned_tasks1.order_id }}">Mark as Completed
+                                            </button>
+                                        </td>
+                                    {% else %}
+                                        <td>
+                                            <div class="badges bg-lightgreen">Task Completed</div>
+                                        </td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#complete-order').on('click', function () {
+                const orderId = $(this).data('order-id');
+                console.log(orderId)
+                $.ajax({
+                    url: `/employee/update/${orderId}`,
+                    type: 'POST',
+                    success: function (response) {
+                        alert(response.message);
+                        location.reload(); // Reload the page to see updated status
+                    },
+                    error: function (xhr) {
+                        alert(xhr.responseJSON.message);
+                    }
+                });
+            });
+        });
+    </script>
+
+{% endblock body %}

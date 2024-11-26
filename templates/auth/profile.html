@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block title %}WMS - Profile{% endblock title %}
+
+{% block body %}
+
+    <div class="page-wrapper    {% if session['role'] != 'admin' and session['role'] != 'manager' %}ms-0{% endif %}">
+        <div class="content">
+            <div class="page-header">
+                <div class="page-title">
+                    <h4>Profile</h4>
+                    <h6>User Profile</h6>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="profile-set">
+                        <div class="profile-head">
+                        </div>
+                        <div class="profile-top">
+                            <div class="profile-content">
+                                <div class="profile-contentimg">
+                                    {% if user[0].image != null %}
+                                        <img src="http://127.0.0.1:5000/{{ user[0].image }}" alt="User Image"
+                                             id="blah">
+                                    {% else %}
+                                        <img src="/static/assets/img/profiles/avatar-17.jpg" alt="User Image"
+                                             id="blah">
+                                    {% endif %}
+                                    <script>
+                                        console.log('{{ user[0].image }}')
+                                    </script>
+                                    <div class="profileupload">
+                                        <input type="file" id="imgInp">
+                                        <a href="javascript:void(0);">
+                                            <img src="/static/assets/img/icons/edit-set.svg" alt="img"></a>
+                                    </div>
+                                </div>
+                                <div class="profile-contentname">
+                                    <h2>{{ user[0].full_name }}</h2>
+                                    <h4>Updates Your Photo and Personal Details.</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <form method="post" action="/register/profile/update/{{ user[0]._id }}">
+                        <div class="row">
+                            <div class="col-lg-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label>First Name</label>
+                                    <input type="text" id="full_name" name="full_name" value="{{ user[0].full_name }}"
+                                           required
+                                           onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || event.charCode == 32">
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label>Mobile No</label>
+                                    <input type="text" id="mobile" name="mobile" value="{{ user[0].mobile }}" required
+                                           onkeypress="return validateMobile(event)" minlength="10" maxlength="10">
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input type="email" id="email" name="email" value="{{ user[0].email }}" required
+                                           disabled onkeypress="return validateEmailInput(event)">
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label>City</label>
+                                    <input type="text" id="city" name="city" value="{{ user[0].city }}" required
+                                           onkeypress="return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122) || event.charCode == 32">
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label>Area</label>
+                                    <input type="text" id="area" name="area" value="{{ user[0].area }}" required>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-sm-6 col-12">
+                                <div class="form-group">
+                                    <label>Address</label>
+                                    <input type="text" id="address" name="address" value="{{ user[0].address }}"
+                                           required>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <button type="submit" href="javascript:void(0);" class="btn btn-submit me-2">Submit
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <script>
+        function validateMobile(event) {
+            var input = document.getElementById('mobile').value;
+            var charCode = event.which || event.keyCode;
+
+            // Check if first digit is 7, 8, or 9
+            if (input.length === 0) {
+                return (charCode >= 55 && charCode <= 57); // 7, 8, or 9
+            }
+            // For the next 9 digits, allow only 0-9
+            else if (input.length > 0 && input.length < 10) {
+                return (charCode >= 48 && charCode <= 57); // 0-9
+            }
+            // Prevent input if length exceeds 10
+            return false;
+        }
+
+        function validateEmailInput(event) {
+            var charCode = event.which || event.keyCode;
+            var validChars = /[A-Za-z0-9@._-]/; // Allow letters, digits, '@', '.', '_', '-'
+
+            // Convert the charCode to a character and check if it's valid
+            var charTyped = String.fromCharCode(charCode);
+            if (validChars.test(charTyped)) {
+                return true;
+            } else {
+                document.getElementById('error-message').textContent = 'Invalid character for email!';
+                return false;
+            }
+        }
+
+    </script>
+
+{% endblock body %}

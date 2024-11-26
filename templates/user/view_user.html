@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block title %}View Users{% endblock title %}
+
+{% block sidebarvu %}active{% endblock sidebarvu %}
+
+{% block body %}
+
+    <div class="page-wrapper">
+        <div class="content">
+            <div class="page-header">
+                <div class="page-title">
+                    <h4>User List</h4>
+                    <h6>Manage Users</h6>
+                </div>
+                <div class="page-btn">
+                    <a href="/user/adduser" class="btn btn-added">
+                        <img src="/static/assets/img/icons/plus.svg" alt="img" class="me-2">
+                        Add User</a>
+                </div>
+            </div>
+
+            {% if error_message %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ error_message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endif %}
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-top">
+                        <div class="search-set">
+                            <div class="search-input">
+                                <a class="btn btn-searchset">
+                                    <img src="/static/assets/img/icons/search-white.svg" alt="img">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table datanew">
+                            <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>First name</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                                <th>City</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for users_list in users_list %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ users_list.full_name }}</td>
+                                    <td>{{ users_list.mobile }}</td>
+                                    <td>{{ users_list.email }}</td>
+                                    <td>{{ users_list.city }}</td>
+                                    <td>{{ users_list.role }}</td>
+                                    <td>
+                                    {% if users_list.role != 'admin' %}
+                                        <div class="status-toggle d-flex justify-content-between align-items-center">
+                                            <input type="checkbox" id="user{{ loop.index }}" name="user{{ loop.index }}"
+                                                   class="check"
+                                                   {% if users_list.status == 'true' %}checked{% endif %}
+                                                   onchange="toggleStatus('{{ users_list._id }}', this.checked)">
+                                            <label for="user{{ loop.index }}" class="checktoggle">checkbox</label>
+                                        </div>
+                                    {% endif %}
+                                    </td>
+                                    <td>
+                                        <a class="me-3" href="/user/updateuser/{{ users_list._id }}">
+                                            <img src="/static/assets/img/icons/edit.svg" alt="img">
+                                        </a>
+
+                                        {% if users_list.role == 'employee' %}
+                                        <a class="me-3" href="/employee/dashboard/{{ users_list._id }}">
+                                            <img src="/static/assets/img/icons/eye.svg" alt="img">
+                                        </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        function toggleStatus(userId, isChecked) {
+            // Prepare the data to send
+            const status = isChecked ? 'true' : 'false';
+
+            // Send an AJAX POST request to the Flask route
+            fetch('/user/user_status', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({user_id: userId, status: status})
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Status updated successfully!');
+                    } else {
+                        alert('Error updating status.');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
+{% endblock body %}
